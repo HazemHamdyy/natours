@@ -15,7 +15,7 @@ mongoose.connect(DB,{
     useFindAndModify : false
 }).then(con =>{
     // console.log(con.connections)
-    console.log("DB connect successfully")
+     console.log("DB connect successfully")
 })
 
 

@@ -29,6 +29,7 @@ const handleTokenExpireError = () =>{
 
 const sendErrorDev = (err,req,res) =>{
     if(! (req.originalUrl.startsWith('/api'))){
+        console.error('ERROR',err)
         return res.status(err.statusCode).render('error',{
             title:'Something Went Wrong',
             msg: err.message
@@ -46,6 +47,7 @@ const sendErrorDev = (err,req,res) =>{
 
 const sendErrorProd = (err,req,res) =>{
     if(! (req.originalUrl.startsWith('/api'))){
+        console.error('ERROR',err)
         const msg = err.isOpertional ? err.message : "Try agian later!"
        return res.status(err.statusCode).render('error',{
             title:'Something Went Wrong',

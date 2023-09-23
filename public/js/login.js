@@ -6,7 +6,7 @@ export const login = async (email, password) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: 'http://localhost:8000/api/v1/auth/login',
+      url: '/api/v1/auth/login',
       data: {
         email,
         password
@@ -28,7 +28,7 @@ export const logout = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://localhost:8000/api/v1/auth/logout'
+      url: '/api/v1/auth/logout'
     });
     if ((res.data.status = 'success')) location.reload(true);
   } catch (err) {

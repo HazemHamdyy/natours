@@ -6,6 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean')
 const hpp = require('hpp')
 const cookieParser = require('cookie-parser')
+const compression = require('compression')
 
 const tourRouter = require('./routes/tourRoutes')
 const userRouter = require('./routes/userRoutes')
@@ -65,6 +66,8 @@ app.use(xss())
 app.use(hpp({
     whitelist:['duration','ratingsAverage','ratingsQuantity','name','duration','maxGroupSize','difficulty','price']
 }))
+app.use(compression())
+
 
 app.use('/',viewRouter)
 app.use('/api/v1/tours/',tourRouter)
