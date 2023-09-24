@@ -11,6 +11,7 @@ const router = express.Router()
 
 router.get('/',authController.isLoggedIn,bookingController.createBookingCheckout,viewsController.getOverview)
 router.get('/login',authController.isLoggedIn,viewsController.login)
+router.get('/signup',viewsController.signup)
 router.get('/me',authController.protect,viewsController.getMe)
 router.get('/my-tours',authController.protect,viewsController.getMyTours)
 
