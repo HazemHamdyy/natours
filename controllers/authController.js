@@ -19,13 +19,14 @@ const signTokenForEmailVerification = id => {
 }
 
 
-const createAndSendToken = (user,statusCode,res,isCreateUser)=>{
+const createAndSendToken = (user,statusCode,res,isCreateUser,req)=>{
     const token = signToken(user._id)
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-        httpOnly: true
+        httpOnly: true,
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
     }
-    if(process.env.NODE_ENV === 'production')  cookieOptions.secure = true
+   // if(req.secure || req.headers['x-forwarded-proto'] === 'https')  cookieOptions.secure = true
 
 
     res.cookie('token',token,cookieOptions)
@@ -135,9 +136,10 @@ exports.verifyEmail = catchAsync(async (req,res,next) => {
     const token2 = signToken(freshUser._id)
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-        httpOnly: true
+        httpOnly: true,
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
     }
-    if(process.env.NODE_ENV === 'production')  cookieOptions.secure = true
+  //  if(req.secure || req.headers['x-forwarded-proto'] === 'https')  cookieOptions.secure = true
 
 
     res.cookie('token',token2,cookieOptions)
@@ -156,7 +158,7 @@ exports.login = catchAsync(async (req,res,next)=>{
         return next(new AppError(`Invalid Credentials`,401))
     }
 
-    createAndSendToken(user,200,res,false)
+    createAndSendToken(user,200,res,false,req)
 
 //     const token = signToken(user._id)
 //     res.status(200).json({
