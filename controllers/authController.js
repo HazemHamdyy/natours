@@ -12,6 +12,12 @@ const signToken = id => {
     })
 }
 
+const signTokenForEmailVerification = id => {
+    return jwt.sign({id},process.env.JWT_SECRET_TWO,{
+        expiresIn:'10m'
+    })
+}
+
 
 const createAndSendToken = (user,statusCode,res,isCreateUser)=>{
     const token = signToken(user._id)
@@ -107,21 +113,36 @@ exports.signup = catchAsync(async (req,res,next)=>{
         password: req.body.password,
         confirmPassword: req.body.confirmPassword
     })
-    const url = `${req.protocol}://${req.get('host')}/me`
+    const token = signTokenForEmailVerification(newUser.id)
+    const url = `${req.protocol}://${req.get('host')}/api/v1/auth/verify-email/${token}`
     console.log(url)
-    await new Email(newUser,url).sendWelcome()
-    createAndSendToken(newUser,201,res,true)
-//     const token = signToken(newUser._id)
-    
-//     newUser.password = undefined
-//     newUser.isActive = undefined
-//     res.status(201).json({
-//         status:"success",
-//         token,
-//         data: {
-//             user: newUser
-//         }
-//    })
+    await new Email(newUser,url).sendEmailVerification()
+    res.status(201).json({
+        status:"success",
+        message: 'Email Verification has been send.'
+   })
+})
+
+exports.verifyEmail = catchAsync(async (req,res,next) => {
+    const token = req.params.token
+    const decoded = await promisify(jwt.verify)(token,process.env.JWT_SECRET_TWO)
+
+    const freshUser = await User.findById(decoded.id)
+
+    if(!freshUser){
+        return next(new AppError('The User belongs to this token does no longer exist.',401))
+    }
+    const token2 = signToken(freshUser._id)
+    const cookieOptions = {
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+        httpOnly: true
+    }
+    if(process.env.NODE_ENV === 'production')  cookieOptions.secure = true
+
+
+    res.cookie('token',token2,cookieOptions)
+    res.locals.user = freshUser
+    res.redirect(`${req.protocol}://${req.get('host')}/`)
 })
 
 exports.login = catchAsync(async (req,res,next)=>{

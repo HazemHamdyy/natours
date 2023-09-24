@@ -19,7 +19,7 @@ router.get('/me',userController.getMe,userController.getUserById)
 // restrict this routes to only admins
 router.use(authController.restrictTo('admin'))
 
-router.route('/').get(userController.getAllUsers)
+router.route('/').get(authController.protect,authController.restrictTo('admin'),userController.getAllUsers)
 
 router.route('/:id').get(userController.getUserById)
 .patch(userController.deleteEmailAndPasswordUpdating,

@@ -47,7 +47,7 @@ const tourSchema = mongoose.Schema({
             validator: function(val){
             return val <= this.price
         },
-        message: 'Discount must be less or equal than price'
+        message: 'Discount must be less than or equal  price'
     },
     
     },
@@ -74,17 +74,19 @@ const tourSchema = mongoose.Schema({
         date: Date,
         participants: {
             type: Number,
-            validate: {
-                validator: function(el){
-                    return el <= this.maxGroupSize
-                },
-                message: `this tour with this date is sold out`
-            },
+            // validate: {
+            //     validator: function(el){
+            //         console.log(el,this.maxGroupSize)
+            //         return el <= this.maxGroupSize
+            //     },
+            //     message: `this tour with this date is sold out`
+            // },
+            default: 0
+        },
             soldOut: {
                 type: Boolean,
                 default: false
             }
-        }
     }],
     secretTour:{
         type: Boolean,
@@ -144,6 +146,7 @@ tourSchema.virtual('reviews',{
 
 //DOCUMENT MIDDLEWARE (run before .save() and .create())
 tourSchema.pre('save',function(next){
+    console.log(this)
 this.slug = slugify(this.name,{lower:true})
 next()
 })

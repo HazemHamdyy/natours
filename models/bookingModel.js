@@ -18,8 +18,8 @@ const bookingSchema = mongoose.Schema({
         type: Number,
         required: [true,'The booking must have a price']
     },
-    selectedDate : {
-        type: Date,
+    selectedDateID : {
+        type: String,
         required: [true,'You Must select the date of the tour']
     
     },
@@ -46,18 +46,30 @@ bookingSchema.pre(/^find/,function(next) {
 
 bookingSchema.pre('save',async function(next){
     const tour = await Tour.findById(this.tour)
+
     const date = tour.startDates.filter(date => {
-        return (this.selectedDate === date.date) && (date.soldOut === false)
+        return (this.selectedDateID == date._id) && (date.soldOut === false)
     })
-    if(!date) {
-       return next(new AppError(`this tour date is sold out. Please choose another date`))
+    if(date.length === 0) {
+       return next(new AppError(`this tour date is sold out or doesn't exist. Please choose another date`))
     }
-    const ind =  tour.startDates.findIndex(el => this.selectedDate === el.date) 
+    const ind =  tour.startDates.findIndex(el => this.selectedDateID == el._id) 
     tour.startDates[ind].participants += 1
     tour.startDates[ind].soldOut = tour.startDates[ind].participants === tour.maxGroupSize
     await tour.save()
 
     next()
+})
+
+bookingSchema.post(/^findOneAndDelete/,async function(doc){
+    console.log(doc)
+    // const booking = await Booking.findById(this._conditions._id)
+    // console.log(booking)
+     const tour = await Tour.findById(doc.tour._id)
+     const ind =  tour.startDates.findIndex(el => doc.selectedDateID == el._id) 
+    tour.startDates[ind].participants -= 1
+    tour.startDates[ind].soldOut = tour.startDates[ind].participants === tour.maxGroupSize
+    await tour.save()
 })
 
 const Booking = mongoose.model('Booking',bookingSchema)

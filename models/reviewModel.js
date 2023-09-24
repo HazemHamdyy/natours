@@ -55,7 +55,7 @@ reviewSchema.statics.calcAvrageRatings = async function(tourId){
     })
 }
 
-reviewSchema.pre('save',async function(){
+reviewSchema.pre('save',async function(next){
    const booking =  await  Booking.findOne({tour: this.tour,user:this.user})
    if(!booking){
     next(new AppError(`Sorry! you didn't book this tour before, So you can't review on it`,400))
