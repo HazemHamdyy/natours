@@ -8,8 +8,8 @@ process.on('uncaughtException', err => {
 })
 
 dotenv.config({ path: './config.env' });
-const DB = process.env.DATABASE_URL
-mongoose.connect('mongodb+srv://hazem:nfwt8m5xxf0IHUYi@cluster0.olljuaz.mongodb.net/natours?retryWrites=true',{
+const DB = process.env.DATABASE_URL.replace('<PASSWORD>',process.env.DATABASE_PASSWORD)
+mongoose.connect(DB,{
     useNewUrlParser : true,
     useCreateIndex : true,
     useFindAndModify : false
