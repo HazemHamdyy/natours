@@ -1,6 +1,6 @@
 version: '3'
 services:
-  natours-app:
+  node-app:
     container_name: version-one-app-container
     build: 
       context: .
