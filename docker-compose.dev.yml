@@ -1,0 +1,16 @@
+version: '3'
+services:
+  natours-app:
+    container_name: version-one-app-container
+    build: 
+      context: .
+      target: development
+    volumes:
+      - .:/app:ro
+      - /app/node_modules
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - ./config.env
