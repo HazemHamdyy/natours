@@ -130,4 +130,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Thank you for using the Natures tour booking backend application. If you have any questions or encounter any issues, please don't hesitate to contact us. Happy coding!
+Thank you for using the Natours tour booking backend application. If you have any questions or encounter any issues, please don't hesitate to contact us. Happy coding!
